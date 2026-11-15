@@ -17,10 +17,24 @@ def shot(name):
     (OUT / (name + '.png')).write_bytes(adb('exec-out', 'screencap', '-p', binary=True))
 
 def ui(name='latest'):
-    adb('shell', 'uiautomator', 'dump', '/sdcard/sleo-test-ui.xml', timeout=40)
-    text = adb('shell', 'cat', '/sdcard/sleo-test-ui.xml')
-    (OUT / (name + '.xml')).write_text(text, encoding='utf-8')
-    return ET.fromstring(text[text.index('<?xml'):])
+    last_error=None
+    for attempt in range(3):
+        adb('shell','rm','-f','/sdcard/sleo-test-ui.xml')
+        try:
+            adb('shell', 'uiautomator', 'dump', '--compressed', '/sdcard/sleo-test-ui.xml', timeout=40)
+        except subprocess.CalledProcessError as e:
+            # API 34 may exit while its accessibility callback is shutting down.
+            # Accept only a newly written, well-formed hierarchy, never stale data.
+            last_error=e
+        try:
+            text = adb('shell', 'cat', '/sdcard/sleo-test-ui.xml')
+            tree=ET.fromstring(text[text.index('<?xml'):])
+            (OUT / (name + '.xml')).write_text(text, encoding='utf-8')
+            return tree
+        except Exception as e:
+            last_error=e
+            time.sleep(2)
+    raise last_error
 
 def find(tree, value, exact=False):
     found=[]
@@ -64,9 +78,10 @@ try:
     apk_hash=hashlib.sha256(apk.read_bytes()).hexdigest()
     adb('install','-r',str(apk))
     launch()
+    assert adb('shell','pidof','io.sleo.app'), 'App process is absent after launch'
+    record('Signed release APK installs and opens',apk_sha256=apk_hash)
     wait_text('예시로 살펴보기')
     shot('01-release-home')
-    record('Signed release APK installs and opens',apk_sha256=apk_hash)
     tap('예시로 살펴보기')
     wait_text('오른쪽 차량이 가까워 보여 속도를 줄였어요.',60)
     shot('02-example-records')
