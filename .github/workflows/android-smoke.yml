@@ -1,0 +1,60 @@
+name: Signed APK Android check
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['apk/**', 'app/**', 'tests/android_smoke.py', '.github/workflows/android-smoke.yml']
+permissions:
+  contents: read
+jobs:
+  signed-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check APK and bridge
+        run: |
+          cd apk
+          sha256sum --check SHA256SUMS.txt
+          cd ..
+          node tests/verify_native_bridge.mjs
+      - name: Install Android emulator image
+        run: |
+          sdkmanager 'platform-tools' 'emulator' 'system-images;android-34;default;x86_64'
+          echo no | avdmanager create avd -n SleoCheck -k 'system-images;android-34;default;x86_64'
+          cat >> "$HOME/.android/avd/SleoCheck.avd/config.ini" <<'EOF'
+          hw.lcd.width=1600
+          hw.lcd.height=900
+          hw.lcd.density=160
+          hw.initialOrientation=landscape
+          hw.keyboard=yes
+          hw.gpu.enabled=yes
+          hw.gpu.mode=swiftshader_indirect
+          EOF
+          sudo chmod 666 /dev/kvm
+      - name: Start Android 14
+        run: |
+          mkdir -p test-output/android
+          nohup "$ANDROID_HOME/emulator/emulator" -avd SleoCheck -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -memory 2048 -cores 2 > test-output/android/emulator.log 2>&1 &
+          adb wait-for-device
+          for n in $(seq 1 120); do
+            if [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = '1' ]; then break; fi
+            sleep 3
+          done
+          test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = '1'
+          adb shell input keyevent 82
+          adb shell settings put global window_animation_scale 0
+          adb shell settings put global transition_animation_scale 0
+          adb shell settings put global animator_duration_scale 0
+          adb shell wm size 1600x900
+          adb shell wm density 160
+      - name: Exercise submitted release APK
+        run: python3 tests/android_smoke.py
+      - name: Capture system log
+        if: always()
+        run: adb logcat -d -t 1500 > test-output/android/logcat.txt || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: signed-apk-android14-evidence
+          path: test-output/android/
