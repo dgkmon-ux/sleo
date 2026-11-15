@@ -1,0 +1,30 @@
+{
+  "emptyExample": {
+    "x": 976,
+    "y": 673
+  },
+  "importNav": {
+    "x": 115,
+    "y": 320
+  },
+  "openFirst": {
+    "x": 1439,
+    "y": 550
+  },
+  "sendTab": {
+    "x": 1349,
+    "y": 384
+  },
+  "export": {
+    "x": 1325,
+    "y": 758
+  },
+  "sendTabAfterCancel": {
+    "x": 1349,
+    "y": 384
+  },
+  "importFile": {
+    "x": 695,
+    "y": 592
+  }
+}

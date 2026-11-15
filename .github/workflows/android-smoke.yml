@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['apk/**', 'app/**', 'tests/android_smoke.py', '.github/workflows/android-smoke.yml']
+    paths: ['apk/**', 'app/**', 'tests/android*', '.github/workflows/android-smoke.yml']
 permissions:
   contents: read
 jobs:
@@ -70,10 +70,10 @@ jobs:
           adb shell wm size 1600x900
           adb shell wm density 160
       - name: Exercise submitted release APK
-        run: python3 tests/android_smoke.py
+        run: python3 tests/android_touch_smoke.py
       - name: Capture system log
         if: always()
-        run: adb logcat -d -t 1500 > test-output/android/logcat.txt || true
+        run: timeout --kill-after=5s 15s adb logcat -d -t 1500 > test-output/android/logcat.txt || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
