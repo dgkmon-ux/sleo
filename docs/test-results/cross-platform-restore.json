@@ -1,0 +1,9 @@
+{
+  "at": "2026-11-15T14:38:56.472Z",
+  "passed": true,
+  "method": "Android signed release export restored in a fresh Chrome browser context",
+  "memo": "오른쪽 차량이 가까워 보여 속도를 줄였어요.",
+  "name": "20261115_210015_F.webm",
+  "bytes": 756228,
+  "hash": "6cab15f34bbf564f3c5ad6debbdc339b73184a3d141785e5ef90407e39e1f2d3"
+}

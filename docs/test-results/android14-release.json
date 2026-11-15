@@ -1,0 +1,35 @@
+{
+  "tested_at": "2026-11-15T14:37:50.948175+00:00",
+  "artifact": "submitted signed release APK",
+  "environment": {
+    "android": "14",
+    "api": "34",
+    "screen": "Physical size: 1600x900",
+    "density": "Physical density: 160",
+    "webview": "Current WebView Update Service state\n  Multiprocess enabled: true\n  Current WebView package (name, version): (com.android.webview, 113.0.5672.136)\n  Minimum targetSdkVersion: 33\n  Minimum WebView version code: 567263606\n  Number of relros started: 1\n  Number of relros finished: 1\n  WebView package dirty: false\n  Any WebView package installed: true\n  Preferred WebView package (name, version): (com.android.webview, 113.0.5672.136)\n  WebView packages:\n    Valid package com.android.webview (versionName: 113.0.5672.136, versionCode: 567263606, targetSdkVersion: 34) is  installed/enabled for all users"
+  },
+  "method": "Android screen taps and exported-file byte validation; screenshots retained",
+  "checks": [
+    {
+      "name": "Signed release APK installs and opens",
+      "passed": true,
+      "apk_sha256": "c56a798795c6afaca31a321cd5c3d93504580f9469d4e21a771b67465c1b7db9"
+    },
+    {
+      "name": "Cancelling native save leaves no exported archive",
+      "passed": true
+    },
+    {
+      "name": "Native Android save produces a valid record ZIP with identical original video",
+      "passed": true,
+      "zip_bytes": 758037,
+      "media_sha256": "6cab15f34bbf564f3c5ad6debbdc339b73184a3d141785e5ef90407e39e1f2d3"
+    },
+    {
+      "name": "App reopens after process restart",
+      "passed": true
+    }
+  ],
+  "passed": 4,
+  "failed": 0
+}

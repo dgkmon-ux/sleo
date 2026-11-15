@@ -25,7 +25,7 @@
 
 배포 파일: [김도건_Sleo_release.apk](apk/김도건_Sleo_release.apk)
 
-서명한 release APK이며 Android 9(API 28) 이상을 대상으로 합니다. 파일을 Android 기기에 옮겨 설치하거나, USB 디버깅이 연결된 기기·에뮬레이터에서 아래 명령을 실행합니다.
+서명한 release APK이며 Android 9(API 28) 이상을 대상으로 합니다. Android System WebView를 최신 버전으로 업데이트한 뒤 설치해 주세요. 파일을 Android 기기에 옮겨 설치하거나, USB 디버깅이 연결된 기기·에뮬레이터에서 아래 명령을 실행합니다.
 
 ```sh
 adb install -r "apk/김도건_Sleo_release.apk"
@@ -33,6 +33,10 @@ adb shell am start -n io.sleo.app/.MainActivity
 ```
 
 패키지 이름은 `io.sleo.app`, 앱 버전은 `1.0.0`입니다.
+
+[Android 14 실행 검증 통과](https://github.com/dgkmon-ux/sleo/actions/runs/43725234884): 제출 APK의 설치·실행, 저장창 취소, 원본 영상이 담긴 ZIP 저장, 앱 재실행을 확인했습니다. Android에서 저장한 ZIP을 새 브라우저에서 다시 여는 검사도 통과했습니다. [검사 항목과 결과](docs/TEST_RESULTS.md)
+
+![Android에서 실행한 Sleo 기록 화면](docs/screens/android-records.png)
 
 ## 시연 순서
 
@@ -56,7 +60,7 @@ adb shell am start -n io.sleo.app/.MainActivity
 | 에뮬레이터 화면 | 1600 × 900px, density 160dpi |
 | Android SDK | compileSdk 34 / minSdk 28 / targetSdk 34 |
 | Pleos Connect SDK·에뮬레이터 | 이번 Android 호스트 개발에 사용하지 않음 |
-| 후속 Pleos Connect 연동 기준 | 2.1.0 |
+| 후속 Pleos Connect 에뮬레이터 검증 대상 | 2.1.0 |
 | 차량 연동 | Gleo 요청, 위치 권한, 실제 주행 제한을 후속 개발에서 연결 |
 
 현재 UI는 화면 폭에 따라 메뉴와 작업 영역이 재배치되는 반응형 화면입니다. 에뮬레이터 설정을 맞출 때는 다음 명령을 사용할 수 있습니다.
